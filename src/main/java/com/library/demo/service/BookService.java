@@ -8,7 +8,7 @@ import com.library.demo.model.Book;
 public interface BookService {
 	
 	public Optional<Book> searchBookById(Long id);
-	public List<Book> getBooks();
+	public List<Book> getAllBooks();
 	public void addBook(Book book);
 	public void removeBook(Long id);
 	public void updateBook(Long id, String author, Long aisle);

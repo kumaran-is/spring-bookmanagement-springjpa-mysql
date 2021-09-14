@@ -17,6 +17,7 @@ import com.library.demo.repository.BookRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Transactional
 @Service
 public class BookServiceImpl implements BookService {
 	
@@ -31,7 +32,7 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public List<Book> getBooks() {
+	public List<Book> getAllBooks() {
 		
 		return bookRepository.findAll();
 	}
@@ -61,7 +62,6 @@ public class BookServiceImpl implements BookService {
 		
 	}
 	
-	@Transactional
 	@Override
 	public void updateBook(Long id, String author, Long aisle) {
 		
@@ -79,5 +79,6 @@ public class BookServiceImpl implements BookService {
 		if(aisle != null && !Objects.equals(book.getAisle(),  aisle)) {
 			book.setAisle(aisle);
 		}
+		bookRepository.save(book);
 	}
 }
