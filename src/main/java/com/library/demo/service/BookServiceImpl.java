@@ -9,42 +9,52 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.library.demo.exception.ResourceAlreadyExistsException;
+import com.library.demo.exception.ResourceNotFoundException;
 import com.library.demo.model.Book;
 import com.library.demo.repository.BookRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
 	
 	@Autowired
 	private BookRepository bookRepository;
 	
+	@Override
 	public Optional<Book> searchBookById(Long id) {
 		
 		return bookRepository.findById(id);
 		
 	}
 	
+	@Override
 	public List<Book> getBooks() {
 		
 		return bookRepository.findAll();
 	}
 	
+	@Override
 	public void addBook(Book book) { 
 		Optional<Book>  bookOptional = bookRepository.findBookByIsbn(book.getIsbn());
 		
 		if(bookOptional.isPresent()) {
-			throw new IllegalStateException("Book already been added");
+			log.error("Book with isbn " + book.getIsbn() + "  already available in the library");
+			throw new ResourceAlreadyExistsException("Book with isbn " + book.getIsbn() + "  already available in the library");
 		}
 		
 		bookRepository.save(book);
 	}
 	
-
+	@Override
 	public void removeBook(Long id) { 
 		
 		boolean exists = bookRepository.existsById(id);
 		if(!exists) {
-			throw new IllegalStateException("Book with id " + id + " does not exists");
+			log.error("Book with id " + id + " does not exists");
+			throw new ResourceNotFoundException("Book with id " + id + " does not exists");
 		}
 		
 		bookRepository.deleteById(id);
@@ -52,10 +62,15 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Transactional
+	@Override
 	public void updateBook(Long id, String author, Long aisle) {
 		
 		Book book = bookRepository.findById(id)
-				.orElseThrow(() -> new IllegalStateException("Book with id " + id + " does not exists"));
+				.orElseThrow(() -> 
+				{
+					log.error("Book with id " + id + " does not exists");
+					throw new ResourceNotFoundException("Book with id " + id + " does not exists"); 
+				});
 		
 		if(author != null  && !Objects.equals(book.getAuthor(),  author)) {
 			book.setAuthor(author);
