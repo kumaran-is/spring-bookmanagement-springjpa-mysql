@@ -38,7 +38,7 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public void addBook(Book book) { 
+	public Book addBook(Book book) { 
 		Optional<Book>  bookOptional = bookRepository.findBookByIsbn(book.getIsbn());
 		
 		if(bookOptional.isPresent()) {
@@ -46,7 +46,7 @@ public class BookServiceImpl implements BookService {
 			throw new ResourceAlreadyExistsException("Book with isbn " + book.getIsbn() + "  already available in the library");
 		}
 		
-		bookRepository.save(book);
+		return bookRepository.save(book);
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public void updateBook(Long id, String author, Long aisle) {
+	public Book updateBook(Long id, String author, Long aisle) {
 		
 		Book book = bookRepository.findById(id)
 				.orElseThrow(() -> 
@@ -80,5 +80,7 @@ public class BookServiceImpl implements BookService {
 			book.setAisle(aisle);
 		}
 		bookRepository.save(book);
+		
+		return book;
 	}
 }

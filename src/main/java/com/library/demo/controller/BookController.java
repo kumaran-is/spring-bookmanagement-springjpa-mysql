@@ -3,6 +3,8 @@ package com.library.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,31 +26,30 @@ public class BookController {
 	private BookService bookService;
 	
 	@GetMapping
-	public List<Book> getBooks() {
-		
-		return bookService.getAllBooks();
+	public ResponseEntity<List<Book>> getBooks() {
+		return ResponseEntity.ok().body(bookService.getAllBooks());
 	}
 	
 	@PostMapping
-	public void addBook(@RequestBody Book book) {
+	public ResponseEntity<Book> addBook(@RequestBody Book book) {
 		
-		bookService.addBook(book);
+		return ResponseEntity.ok().body(bookService.addBook(book));
 	}
 	
 
 	@DeleteMapping("/{id}")
-	public void deleteBook(@PathVariable Long id) {
-		
+	public HttpStatus deleteBook(@PathVariable Long id) {
 		bookService.removeBook(id);
+		return HttpStatus.OK;
 	}
 	
 	@PutMapping("/{id}")
-	public void modifyBook(
+	public ResponseEntity<Book> modifyBook(
 			@PathVariable Long id,
 			@RequestParam(required = false) String author,
 			@RequestParam(required = false) Long aisle) {
 		
-		bookService.updateBook(id, author, aisle);
+		return ResponseEntity.ok().body(bookService.updateBook(id, author, aisle));
 	}
 
 }

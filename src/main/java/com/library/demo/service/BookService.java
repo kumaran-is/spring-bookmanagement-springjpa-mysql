@@ -9,8 +9,8 @@ public interface BookService {
 	
 	public Optional<Book> searchBookById(Long id);
 	public List<Book> getAllBooks();
-	public void addBook(Book book);
+	public Book addBook(Book book);
 	public void removeBook(Long id);
-	public void updateBook(Long id, String author, Long aisle);
+	public Book updateBook(Long id, String author, Long aisle);
 
 }
